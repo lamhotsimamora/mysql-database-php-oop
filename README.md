@@ -1,2 +1,2 @@
 # mysql-database-php-oop
-CRUD Class Database MySQL PHP
+Simple CRUD Class Database for MySQL PHP
