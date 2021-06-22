@@ -33,17 +33,11 @@ class DB
 
 	private $manual_query = false;
 	
-	// private $init = [
-	// 	'username' => 'YOUR_USERNAME',
-	// 	'password' => 'YOUR_PASSWORD',
-	// 	'server'   => 'YOUR_SERVER',
-	// 	'database' => 'YOUR_DATABASE'
-	// ];
 	private $init = [
-		'username' => 'root',
-		'password' => '',
-		'server'   => 'localhost',
-		'database' => 'db_sample'
+		'username' => 'YOUR_USERNAME',
+		'password' => 'YOUR_PASSWORD',
+		'server'   => 'YOUR_SERVER',
+		'database' => 'YOUR_DATABASE'
 	];
 
 	public function __construct(){
