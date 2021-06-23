@@ -339,10 +339,10 @@ class DB
             if ($result) {
                 $this->count =  ($result->num_rows) ? $result->num_rows : null;
             }
+			return $this->count;
 		} catch (\Throwable $th) {
 			exit('Proccess Count Error Because '.$th);
 		}
-		return $this->count;
 	}
 
 	public function get(){

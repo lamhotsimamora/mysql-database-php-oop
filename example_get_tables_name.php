@@ -6,7 +6,7 @@ include 'src/db.php';
 $db = new DB();
 
 /*
-* select * from table_name
+* select table_name FROM information_schema.tables where table_schema = "database_name"
 */
 $obj = $db->getTables();
 
