@@ -10,7 +10,7 @@ $db = new DB();
 */
 $obj = $db->select('column1','column2')
            ->table('table_name')
-            ->insert('value1','value2');
+            ->insert(1,'value2');
 /*
 * @return Boolean
 */       

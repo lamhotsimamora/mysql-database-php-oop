@@ -30,8 +30,6 @@ class DB
 
 	private $data = null;
 	public $count = null;
-
-	private $manual_query = false;
 	
 	private $init = [
 		'username' => 'YOUR_USERNAME',
@@ -278,13 +276,16 @@ class DB
 		$count_values = count($this->values);
 	
 		foreach ($this->values as $key => $value) {
+			if (is_string($value)){
+				$value = '"'.$value.'"';
+			}
 			if ($key==0 && ($count_values==1)){
-				$values .= '"'.$value.'"';
+				$values .= $value;
 			}else{
 				if ($key==($count_values-1)){
-					$values .= '"'.$value.'"';
+					$values .= $value;
 				}else{
-					$values .= '"'.$value.'",';
+					$values .= $value.',';
 				}
 			}	
 		}
