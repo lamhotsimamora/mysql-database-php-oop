@@ -4,6 +4,8 @@ MySQL OOP Class For connect, insert, update, delete, select, and more. And also 
 
 ## Example Syntax
 
+
+```
 $db = new DB();
 
 $obj = $db->select('*')
@@ -14,3 +16,5 @@ $obj = $db->select('*')
 * @return JSON
 */
 echo $obj->toJson();
+
+```
