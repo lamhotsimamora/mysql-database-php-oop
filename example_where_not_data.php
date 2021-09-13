@@ -6,13 +6,12 @@ include 'src/db.php';
 $db = new DB();
 
 /*
-* select * from table_name where id like 1 and username like '%john%'
+* select * from table_name where id != 1
 */
 $obj = $db->select('*')
           ->from('table_name')
-           ->whereLike([
-                'id'=>1,
-                'username' =>'john'
+           ->whereNot([
+                'id'=>1
             ])
           ->get();
 

@@ -28,10 +28,12 @@ class DB
 	private $query_limit = false;
 	private $query_orderby = false;
 	private $query_where_like =false;
+	private $query_where_not =false;
 
 	private $columns    = array();
 	private $wheres     = null;
 	private $where_like =null;
+	private $where_not =null;
 	private $values     = null;
 	private $limit_number = false;
 	private $order_by_columns = false;
@@ -152,6 +154,12 @@ class DB
 		return $this;
 	}
 
+	public function whereNot($val){
+		$this->where_not = $val;
+		$this->queryWhereNot();
+		return $this;
+	}
+
 	public function whereLike($val){
 		$this->where_like = $val;
 		$this->queryWhereLike();
@@ -234,6 +242,33 @@ class DB
 		return $this;
 	}
 
+	
+	private function queryWhereNot()
+	{
+		if ($this->where_not!=false){
+			$where_not = '';
+			$count_where_not = count($this->where_not);
+			
+			$i=0;
+			foreach ($this->where_not as $key => $value) {
+				if (is_string($value)){
+					$value = $value;
+				}
+				if ($i==0 && ($count_where_not==1)){
+					$where_not = $key. ' <> '.$value.'';
+				}else{
+					if ($i==($count_where_not-1)){
+						$where_not .= $key.' <> '.$value.'';
+					}else{
+						$where_not .= $key.' <> '.$value.' AND ';
+					}
+				}	
+				$i++;
+			}
+			$this->query_where_not = ' where '.$where_not;
+		}
+	}
+
 	private function queryWhereLike()
 	{
 		if ($this->where_like!=false){
@@ -290,6 +325,10 @@ class DB
 		else if ($this->query_where_like != false){
 			$this->queryWhereLike();
 			$this->query =  $this->query.$this->query_where_like;
+		}
+		else if ($this->query_where_not != false){
+			$this->queryWhereNot();
+			$this->query =  $this->query.$this->query_where_not;
 		}
 
 		$this->queryOrderBy();
