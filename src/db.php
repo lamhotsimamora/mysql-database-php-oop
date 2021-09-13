@@ -1,5 +1,13 @@
 <?php
 
+/*
+* Original File 'MySQL OOP Class'
+* Made With Love by Lamhot Simamora
+* https://github.com/lamhotsimamora
+* Free license & open source
+* September@2021
+*/
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: POST , GET, OPTIONS");
@@ -14,7 +22,7 @@ class DB
 
 	private $conn       = null;
 	
-	public $result     = null;
+	public  $result     = null;
 	private $query      = null;
 	private $query_where = false;
 	private $query_limit = false;
@@ -27,9 +35,13 @@ class DB
 	private $values     = null;
 	private $limit_number = false;
 	private $order_by_columns = false;
+	private $conn_id=null;
+	private $lock_table = false;
 
 	private $data = null;
 	public $count = null;
+
+	private $all_tables = null;
 	
 	private $init = [
 		'username' => 'YOUR_USERNAME',
@@ -43,11 +55,47 @@ class DB
 		$this->password = $this->init['password'];
 		$this->server   = $this->init['server'];
 		$this->database = $this->init['database'];
-
+		$this->lock_table = false;
 		$this->connect();
 		$this->error();
 		return $this;
 	}    
+
+	public function lockTable($permission=null){
+		$permission_access='WRITE';
+		if ($permission){
+			if ($permission['read'] && $permission['read']==true){
+				$permission_access .= ',READ';
+			}
+		}
+		$final_query = 'LOCK TABLES '.$this->table.' '.$permission_access;
+		$this->query = ($final_query);
+		return $this->proccess();
+	}
+
+	public function unlockTable(){
+		$this->query = ('UNLOCK TABLES');
+		$this->proccess();
+		return $this->toJson();
+	}
+
+	/*
+	* Connection Id
+	*/
+	public function getConId(){
+		$this->query('SELECT CONNECTION_ID()');
+		return $this->conn_id = $this->data['CONNECTION_ID()'];
+	}
+
+	public function getSessionUser(){
+		$this->query('SELECT SESSION_USER()');
+		return $this->toJson();
+	}
+
+	public function showDatabase(){
+		$this->query('SELECT DATABASE()');
+		return $this->toJson();
+	}
 
 	public function from($val){
 		$this->table($val);
@@ -87,12 +135,13 @@ class DB
 
 	private function connect(){
 		try {
-			return $this->conn = new mysqli(
+			$conn =  $this->conn = new mysqli(
 								$this->server, 
 								$this->username, 
 								$this->password, 
 								$this->database
 							);
+			return $conn;
 		} catch (Exception $e) {
 			exit('[Error] '.$e);
 		}
@@ -134,8 +183,13 @@ class DB
 	public function getTables(){
 		$this->query('select table_name FROM information_schema.tables
 		where table_schema = "'.$this->init['database'].'"');
-		$this->proccessWithData();
+		$this->all_tables = $this->proccessWithData();
 		$this->proccessCount();
+		return $this;
+	}
+
+	public function getFields(){
+		$this->getColumns();
 		return $this;
 	}
 
@@ -337,7 +391,8 @@ class DB
 	private function proccessCount(){
 		try {
 			$result =$this->conn->query($this->query);
-            if ($result) {
+            if ($result) 
+			{
                 $this->count =  ($result->num_rows) ? $result->num_rows : null;
             }
 			return $this->count;
